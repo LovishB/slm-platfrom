@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AgentChatModule } from './agent-chat/agent-chat.module';
 import { OpenRouterModule } from './open-router/open-router.module';
 import { ApiKeyMiddleware } from './shared/api-key.middleware';
+import { PinecodeModule } from './pinecode/pinecode.module';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ApiKeyMiddleware } from './shared/api-key.middleware';
     }),
     AgentsModule, 
     UsersModule, 
-    SupabaseModule, AgentChatModule, OpenRouterModule
+    SupabaseModule, AgentChatModule, OpenRouterModule, PinecodeModule
   ],
   controllers: [AppController],
   providers: [AppService],

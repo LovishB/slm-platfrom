@@ -101,4 +101,43 @@ export class SupabaseService {
 
         return true;
     }
+
+    async updateAgentStatus(agentId, newStatus: string): Promise<boolean> {
+        const { data, error } = await this.supabase
+            .from('agents')
+            .update({ status: newStatus })
+            .eq('id', agentId)
+            .single();
+
+        if (error) {
+            this.logger.error('Error updating agent status', error);
+            return false;
+        }
+        return true;
+    }
+
+    // Function to read storage file
+    async readStorageFile(fileURL: string): Promise<Buffer<ArrayBuffer>>{
+        // Extract file path from the URL
+        const basePath = '/storage/v1/object/public/agents-docs//';
+        const pathStart = fileURL.indexOf(basePath);
+
+        if (pathStart === -1) {
+            this.logger.error(`Invalid Supabase public URL for agents-docs: ${fileURL}`);
+            return Buffer.from(new ArrayBuffer(0));
+        }
+
+        const filePath = fileURL.substring(pathStart + basePath.length);
+        const { data, error } = await this.supabase
+            .storage
+            .from('agents-docs')
+            .download(filePath);
+
+        if (error) {
+            this.logger.error(`Error reading storage file ${filePath} from bucket agents-docs`, error);
+            return Buffer.from(new ArrayBuffer(0));
+        }
+
+        return Buffer.from(await data.arrayBuffer());
+    }
 }

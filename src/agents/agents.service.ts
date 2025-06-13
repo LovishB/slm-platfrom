@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { SupabaseService } from '../supabase/supabase.service';
+import { PinecodeService } from 'src/pinecode/pinecode.service';
 
 export const AGENT_CREATION_FEE = 10;
 
@@ -8,8 +9,12 @@ export const AGENT_CREATION_FEE = 10;
 export class AgentsService {
   logger = new Logger(AgentsService.name);
 
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly supabaseService: SupabaseService,
+    private readonly pinecodeService: PinecodeService
+  ) {}
 
+  // Function to create an agent
   async createAgent(createAgentDto: CreateAgentDto) {
     try {
       // Check if agent name is already taken
@@ -66,6 +71,11 @@ export class AgentsService {
         this.logger.error(`Failed to transfer tokens from user ${user.wallet} to agent ${createdAgent.id}`, err);
       });
 
+      // Send agent for RAG training
+      this.pinecodeService.trainAgent(createdAgent).catch(err => {
+        this.logger.error(`Failed to train agent ${createdAgent.id}`, err);
+      });
+
       return { message: 'Agent created', agent: createdAgent };
     } catch (err) {
       this.logger.error('Error in createAgent', err);
@@ -73,6 +83,7 @@ export class AgentsService {
     }
   }
 
+  // Function to get all agents with pagination
   async getAllAgents({ page = 1, limit = 10 }: { page?: number; limit?: number }) {
     try {
       const offset = (page - 1) * limit;
@@ -94,6 +105,7 @@ export class AgentsService {
     }
   }
 
+  // Function to get agents by user (ownerWallet)
   async getAgentsByUser({ ownerWallet, page = 1, limit = 10 }: { ownerWallet: string; page?: number; limit?: number }) {
     try {
       const offset = (page - 1) * limit;
