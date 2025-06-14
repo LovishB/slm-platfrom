@@ -14,6 +14,7 @@ export const createAgentSchemaExample = {
       ],
       description:
         'A helpful DeFi agent for answering web3 questions.',
+      domain: 'Web3, DeFi, Customer Support'
     },
   },
 };

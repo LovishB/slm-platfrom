@@ -19,6 +19,7 @@ export class OpenRouterService {
             const response = await this.openai.chat.completions.create({
                 model: MODEL_PRIMARY,
                 messages,
+                max_tokens: 300,
             });
 
             return response.choices[0].message.content;

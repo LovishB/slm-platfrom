@@ -6,4 +6,5 @@ export class CreateAgentDto {
   docs_url?: string;
   conversation_starters?: string[];
   description?: string;
+  domain?: string;
 }

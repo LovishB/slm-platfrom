@@ -55,12 +55,12 @@ export class AgentsService {
       };
 
       // Create the agent
-      const createdAgent = await this.supabaseService.createAgent(agentToCreate);
-
-      if (!createdAgent) {
-        this.logger.error('Failed to create agent');
+      let { data: createdAgent, error: agentError } = await this.supabaseService.createAgent(agentToCreate);
+      if (!createdAgent && agentError) {
+        this.logger.error('Failed to create agent', agentError);
         throw new BadRequestException('Failed to create agent');
       }
+      this.logger.log(`Agent created with ID: ${createdAgent.id}`);
 
       // Once the agent is created, transfer tokens from the user to the agent
       this.supabaseService.transferTokensFromUserToAgent(

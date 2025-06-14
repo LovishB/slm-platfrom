@@ -52,38 +52,38 @@ export class SupabaseService {
 
     // Function to create a new agent
     async createAgent(createAgentDto: any) {
-        const { data, error } = await this.supabase
+        return await this.supabase
             .from('agents')
             .insert([createAgentDto])
             .select()
             .single();
-
-        if (error) {
-            throw error;
-        }
-        return data;
     }
 
     // Function to get all agents with pagination, sorted by tokens DESC
     async getAllAgents({ limit = 10, offset = 0 }: { limit?: number; offset?: number }) {
-        const { data, error } = await this.supabase
+        return await this.supabase
             .from('agents')
             .select('*')
             .order('tokens', { ascending: false })
             .range(offset, offset + limit - 1);
-
-        return { data, error };
     }
 
     // Function to get agents by owner wallet with pagination, sorted by tokens DESC
     async getAgentsByUser({ ownerWallet, limit = 10, offset = 0 }: { ownerWallet: string; limit?: number; offset?: number }) {
-        const { data, error } = await this.supabase
+        return await this.supabase
             .from('agents')
             .select('*')
             .eq('owner_wallet', ownerWallet)
             .range(offset, offset + limit - 1);
+    }
 
-        return { data, error };
+    // Function to get agent by ID
+    async getAgentById(agentId: string) {
+        return await this.supabase
+            .from('agents')
+            .select('*')
+            .eq('id', agentId)
+            .single();
     }
 
     // Function to transfer tokens from user to agent
@@ -98,7 +98,7 @@ export class SupabaseService {
             this.logger.error('Error transferring tokens from user to agent', error);
             return false;
         }
-
+        this.logger.log(`Successfully transferred ${transfer_amount} agent Creation Fee from user ${user_id} to agent ${agent_id}`);
         return true;
     }
 
