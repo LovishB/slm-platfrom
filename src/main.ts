@@ -5,8 +5,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-  const port = process.env.PORT ?? 4200;
+  const port = 4200;
   const app = await NestFactory.create(AppModule);
+
+  // Enable CORS
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   // Swagger setup
   const config = new DocumentBuilder()
@@ -17,7 +24,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   logger.log('🚀 Server is running!');
   logger.log(`📍 Listening on: http://localhost:${port}`);
 }
