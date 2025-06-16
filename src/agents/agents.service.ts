@@ -127,4 +127,26 @@ export class AgentsService {
       throw new BadRequestException('Failed to fetch agents by owner');
     }
   }
+
+  // Function to get agent by agentId
+  async getAgentById(agentId: string) {
+    try {
+      const { data: agent, error } = await this.supabaseService.getAgentById(agentId);
+
+      if (!agent) {
+        this.logger.warn(`Agent with id ${agentId} not found`);
+        throw new BadRequestException('Agent not found');
+      }
+
+      if (error) {
+        this.logger.error(`Failed to fetch agent with id ${agentId}`, error);
+        throw new BadRequestException('Failed to fetch agent');
+      }
+      
+      return agent;
+    } catch (err) {
+      this.logger.error('Error in getAgentById', err);
+      throw new BadRequestException('Failed to fetch agent');
+    }
+  }
 }

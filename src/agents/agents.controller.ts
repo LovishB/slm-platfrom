@@ -62,4 +62,17 @@ export class AgentsController {
     return this.agentsService.getAgentsByUser({ ownerWallet, page, limit });
   }
 
+  @Get('by-agent-id')
+  @ApiHeader({
+    name: 'x-api-key',
+    description: 'API key of Backend',
+    required: true,
+    schema: { type: 'string' }
+  })
+  @ApiOperation({ summary: 'Get agent by agent id' })
+  async getAgentById(@Query('agentId') agentId: string) {
+    this.logger.log(`API CALLED - GET /agents/by-agent-id/${agentId}`);
+    return this.agentsService.getAgentById(agentId);
+  }
+
 }
