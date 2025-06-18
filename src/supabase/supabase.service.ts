@@ -140,4 +140,17 @@ export class SupabaseService {
 
         return Buffer.from(await data.arrayBuffer());
     }
+
+    // Function to get total number of agents
+    async getTotalAgentsCount() {
+        const { count, error } = await this.supabase
+            .from('agents')
+            .select('*', { count: 'exact', head: true });
+
+        if (error) {
+            this.logger.error('Error fetching total agents count', error);
+            throw error;
+        }
+        return { data: count, error: null };
+    }
 }

@@ -75,4 +75,17 @@ export class AgentsController {
     return this.agentsService.getAgentById(agentId);
   }
 
+  @Get('count')
+  @ApiHeader({
+    name: 'x-api-key',
+    description: 'API key of Backend',
+    required: true,
+    schema: { type: 'string' }
+  })
+  @ApiOperation({ summary: 'Get total number of agents' })
+  async getTotalAgents() {
+    this.logger.log('API CALLED - GET /agents/count');
+    return this.agentsService.getTotalAgents();
+  }
+
 }

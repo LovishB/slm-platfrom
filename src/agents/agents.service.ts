@@ -149,4 +149,21 @@ export class AgentsService {
       throw new BadRequestException('Failed to fetch agent');
     }
   }
+
+  // Function to get total number of agents
+  async getTotalAgents() {
+    try {
+      const { data: count, error } = await this.supabaseService.getTotalAgentsCount();
+      if (error) {
+        this.logger.error('Failed to fetch total agents count', error);
+        throw new BadRequestException('Failed to fetch total agents count');
+      }
+      return { total: count };
+    } catch (err) {
+      this.logger.error('Error in getTotalAgents', err);
+      throw new BadRequestException('Failed to fetch total agents count');
+    }
+  }
+
+  
 }
